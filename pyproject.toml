@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "image-batch-enhance-rotate-crop"
+version = "0.1.0"
+description = "Batch image enhancement, rotation, and cropping tool."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = [
+    "numpy>=1.24",
+    "opencv-python>=4.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+image-batch-process = "image_batch_enhance_rotate_crop.cli:main"
+image-batch-process-gui = "image_batch_enhance_rotate_crop.ui:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
