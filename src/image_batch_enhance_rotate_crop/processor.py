@@ -30,6 +30,22 @@ class ProcessingOptions:
     crop_scale: float = 0.5
     draw_rotation_reference: bool = True
 
+    def validate(self) -> None:
+        if not (self.enhance or self.rotate or self.crop):
+            raise ValueError("At least one processing step must be enabled")
+        if self.crop and not self.rotate:
+            raise ValueError("Cropping requires rotation so that a center can be detected")
+        if self.brightness_factor <= 0 or self.contrast_factor <= 0:
+            raise ValueError("Brightness and contrast factors must be positive")
+        if self.center_number < 1:
+            raise ValueError("center_number must be greater than or equal to 1")
+        if not 0 <= self.spot_threshold <= 255 or not 0 <= self.line_threshold <= 255:
+            raise ValueError("Detection thresholds must be between 0 and 255")
+        if not 0 < self.crop_proportion < 1:
+            raise ValueError("crop_proportion must be between 0 and 1")
+        if not 0 < self.crop_scale <= 1:
+            raise ValueError("crop_scale must be between 0 and 1")
+
 
 @dataclass(frozen=True)
 class ProcessingResult:
@@ -47,6 +63,7 @@ def process_folder(
     options: ProcessingOptions,
     progress_callback: ProgressCallback | None = None,
 ) -> list[ProcessingResult]:
+    options.validate()
     input_path = Path(input_dir)
     output_path = Path(output_dir)
     if not input_path.exists():

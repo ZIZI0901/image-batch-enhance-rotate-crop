@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
+import sys
 
 from image_batch_enhance_rotate_crop.processor import ProcessingOptions, process_folder
 
@@ -27,7 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def main() -> None:
+def main() -> int:
     args = build_parser().parse_args()
     options = ProcessingOptions(
         enhance=not args.no_enhance,
@@ -43,12 +44,18 @@ def main() -> None:
         crop_scale=args.crop_scale,
         draw_rotation_reference=not args.no_reference,
     )
-    results = process_folder(args.input_dir, args.output_dir, options)
+    try:
+        results = process_folder(args.input_dir, args.output_dir, options)
+    except (FileNotFoundError, NotADirectoryError, ValueError) as exc:
+        print(f"Error: {exc}", file=sys.stderr)
+        return 2
+
     failures = [result for result in results if not result.success]
     print(f"Processed {len(results)} file(s), {len(failures)} failed.")
     for failure in failures:
         print(f"{failure.filename}: {failure.message}")
+    return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

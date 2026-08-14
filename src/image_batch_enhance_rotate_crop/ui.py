@@ -213,7 +213,7 @@ class ImageProcessorApp:
         if not 0 < crop_scale <= 1:
             raise ValueError("裁剪尺寸比例必须在 0 和 1 之间")
 
-        return ProcessingOptions(
+        options = ProcessingOptions(
             enhance=self.enhance_var.get(),
             rotate=self.rotate_var.get(),
             crop=self.crop_var.get(),
@@ -227,6 +227,8 @@ class ImageProcessorApp:
             crop_scale=crop_scale,
             draw_rotation_reference=self.draw_reference_var.get(),
         )
+        options.validate()
+        return options
 
     @staticmethod
     def _read_float(entry: ttk.Entry, label: str) -> float:
