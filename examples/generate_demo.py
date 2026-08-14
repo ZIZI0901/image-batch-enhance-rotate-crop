@@ -1,4 +1,4 @@
-"""Generate a synthetic, privacy-safe example for the project README."""
+"""Generate the synthetic example images used in the README."""
 
 from pathlib import Path
 
